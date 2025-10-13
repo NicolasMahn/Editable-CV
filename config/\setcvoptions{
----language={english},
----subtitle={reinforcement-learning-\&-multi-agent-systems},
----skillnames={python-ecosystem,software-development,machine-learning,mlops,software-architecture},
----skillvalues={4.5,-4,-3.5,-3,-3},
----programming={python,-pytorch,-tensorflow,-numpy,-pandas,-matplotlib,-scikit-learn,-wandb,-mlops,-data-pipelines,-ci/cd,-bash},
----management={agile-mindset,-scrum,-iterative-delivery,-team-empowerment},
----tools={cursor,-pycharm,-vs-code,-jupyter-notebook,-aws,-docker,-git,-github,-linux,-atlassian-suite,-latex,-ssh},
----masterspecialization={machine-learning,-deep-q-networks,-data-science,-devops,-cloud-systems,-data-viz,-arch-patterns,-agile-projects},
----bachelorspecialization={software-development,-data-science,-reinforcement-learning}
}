@@ -1,0 +1,11 @@
+\setCVOptions{
+    language={english},
+    subtitle={Reinforcement Learning \& Multi-Agent Systems},
+    skillNames={Python Ecosystem,Software Development,Machine Learning,MLOps,Software Architecture},
+    skillValues={4.5, 4, 3.5, 3, 3},
+    programming={Python, PyTorch, TensorFlow, NumPy, Pandas, Matplotlib, Scikit-learn, WandB, MLOps, Data Pipelines, CI/CD, Bash},
+    management={Agile Mindset, Scrum, Iterative Delivery, Team Empowerment},
+    tools={Cursor, PyCharm, VS Code, Jupyter Notebook, AWS, Docker, Git, GitHub, Linux, Atlassian Suite, LaTeX, SSH},
+    masterSpecialization={Machine Learning, Deep Q-Networks, Data Science, DevOps, Cloud Systems, Data Viz, Arch Patterns, Agile Projects},
+    bachelorSpecialization={Software Development, Data Science, Reinforcement Learning}
+}
