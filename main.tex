@@ -1,0 +1,135 @@
+\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+\usepackage{expl3}
+\usepackage{paracol}
+\usepackage[utf8]{inputenc}
+\usepackage{xstring}
+\usepackage{xkeyval}
+
+\definecolor{ColorAccent}{HTML}{5B1F36}
+\definecolor{ColorAccent2}{HTML}{812C4D}
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{555555}
+
+\colorlet{heading}{ColorAccent}
+\colorlet{accent}{ColorAccent2}
+\colorlet{body}{LightGrey}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{tagline}{ColorAccent}
+
+
+\renewcommand{\cvItemMarker}{{\small\textbullet}}
+\renewcommand{\cvRatingMarker}{\faCircle}
+
+\photoR{3.5cm}{BewerbungsFoto2024}
+
+% === Define global option handler ===
+\newcommand{\setCVOptions}[1]{%
+  \renewcommand{\CVoptions}{#1}%
+  \setkeys{CV}{#1}%
+}
+
+% === Define keys === 
+\makeatletter 
+\define@key{CV}{language}{\def\cvLanguage{#1}} 
+\define@key{CV}{subtitle}{\def\cvSubtitle{#1}} 
+
+\define@key{CV}{skillNames}{\def\cvSkillNames{#1}} 
+\define@key{CV}{skillValues}{\def\cvSkillValues{#1}} 
+
+\define@key{CV}{programming}{\def\cvProgramming{#1}} 
+\define@key{CV}{management}{\def\cvManagement{#1}} 
+\define@key{CV}{tools}{\def\cvTools{#1}} 
+\define@key{CV}{masterSpecialization}{\def\cvMasterSpecialization{#1}} 
+\define@key{CV}{bachelorSpecialization}{\def\cvBachelorSpecialization{#1}} 
+
+\makeatother
+
+%===================================================================================================================================
+%-----------------------------------------------CHOOSE CONFIG FILE HERE-------------------------------------------------------------
+%===================================================================================================================================
+\input{config/helsing.tex}
+%===================================================================================================================================
+%-----------------------------------------------CHOOSE CONFIG FILE HERE-------------------------------------------------------------
+%===================================================================================================================================
+
+\ExplSyntaxOn
+
+\tl_set:Nx \l_cv_skillnames_tl { \cvSkillNames } 
+\tl_set:Nx \l_cv_skillvalues_tl { \cvSkillValues } 
+\tl_set:Nx \l_cv_programming_tl { \cvProgramming } 
+\tl_set:Nx \l_cv_management_tl { \cvManagement } 
+\tl_set:Nx \l_cv_tools_tl { \cvTools } 
+\tl_set:Nx \l_cv_masterSpecialization_tl { \cvMasterSpecialization } 
+\tl_set:Nx \l_cv_bachelorSpecialization_tl { \cvBachelorSpecialization } 
+
+\seq_set_split:NnV \l_cv_skillnames_seq { , } \l_cv_skillnames_tl
+\seq_set_split:NnV \l_cv_skillvalues_seq { , } \l_cv_skillvalues_tl
+\seq_set_split:NnV \l_cv_programming_seq { , } \l_cv_programming_tl
+\seq_set_split:NnV \l_cv_management_seq { , } \l_cv_management_tl
+\seq_set_split:NnV \l_cv_tools_seq { , } \l_cv_tools_tl
+\seq_set_split:NnV \l_cv_masterSpecialization_seq { , } \l_cv_masterSpecialization_tl
+\seq_set_split:NnV \l_cv_bachelorSpecialization_seq { , } \l_cv_bachelorSpecialization_tl
+
+
+% Define a rendering command
+\NewDocumentCommand{\cvtags}{m}{
+    \seq_if_empty:cTF { l_cv_#1_seq }
+      { } % do nothing if empty
+      {
+        \seq_map_inline:cn { l_cv_#1_seq } { \cvtag{\tl_trim_spaces:n {##1}} }
+    }
+}
+
+\NewDocumentCommand{\cvtagstitle}{mm}{
+    \seq_if_empty:cTF { l_cv_#1_seq }
+      { } % do nothing if empty
+      {
+        \par\medskip
+        \divider
+        {\cvsubsection{\textcolor{ColorAccent2}{#2}}}\par\vspace{0.3em}
+        \seq_map_inline:cn { l_cv_#1_seq } { \cvtag{\tl_trim_spaces:n {##1}} }
+    }
+}
+
+\NewDocumentCommand{\cvskills}{mm}{
+  % #1 = skill names key, #2 = skill values key
+  \seq_if_exist:cTF { l_cv_#1_seq }{
+    \seq_if_exist:cTF { l_cv_#2_seq }{
+      % determine how many pairs we can print (min length)
+      \int_zero_new:N \l_tmpa_int
+      \int_zero_new:N \l_tmpb_int
+      \int_zero_new:N \l_tmpc_int
+      \int_set:Nn \l_tmpa_int { \seq_count:c { l_cv_#1_seq } }
+      \int_set:Nn \l_tmpb_int { \seq_count:c { l_cv_#2_seq } }
+      \int_set:Nn \l_tmpc_int { \int_min:nn { \l_tmpa_int } { \l_tmpb_int } }
+
+      % output interleaved pairs
+      \int_step_inline:nn { \l_tmpc_int } {
+        \cvskill{\seq_item:cn { l_cv_#1_seq } { ##1 }}{\seq_item:cn { l_cv_#2_seq } { ##1 }}
+      }
+    }{
+      % if second list doesn't exist
+      \textcolor{red}{Error: list '#2' not found.}
+    }
+  }{
+    % if first list doesn't exist
+    \textcolor{red}{Error: list '#1' not found.}
+  }
+}
+
+
+\ExplSyntaxOff
+
+
+\begin{document}
+
+\newpage
+\IfStrEq{\cvLanguage}{german}{
+  \input{cv_deutsch.tex}
+}{
+  \input{cv_english.tex}
+}
+
+
+\end{document}
