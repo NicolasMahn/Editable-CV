@@ -74,21 +74,30 @@
 
 % Define a rendering command
 \NewDocumentCommand{\cvtags}{m}{
-    \seq_if_empty:cTF { l_cv_#1_seq }
-      { } % do nothing if empty
-      {
-        \seq_map_inline:cn { l_cv_#1_seq } { \cvtag{\tl_trim_spaces:n {##1}} }
+  \seq_if_empty:cTF { l_cv_#1_seq }
+    { } % do nothing if empty
+    {
+      \seq_map_inline:cn { l_cv_#1_seq } {
+        \str_if_eq:nnTF {##1}{\\}
+          { \\ } % line break if the item is literally "\\"
+          { \cvtag{\tl_trim_spaces:n {##1}} } % otherwise render tag
+      }
     }
 }
 
+
 \NewDocumentCommand{\cvtagstitle}{mm}{
-    \seq_if_empty:cTF { l_cv_#1_seq }
-      { } % do nothing if empty
-      {
-        \par\medskip
-        \divider
-        {\cvsubsection{\textcolor{ColorAccent2}{#2}}}\par\vspace{0.3em}
-        \seq_map_inline:cn { l_cv_#1_seq } { \cvtag{\tl_trim_spaces:n {##1}} }
+  \seq_if_empty:cTF { l_cv_#1_seq }
+    { } % do nothing if empty
+    {
+      \par\medskip
+      \divider
+      {\cvsubsection{\textcolor{ColorAccent2}{#2}}}\par\vspace{0.3em}
+      \seq_map_inline:cn { l_cv_#1_seq } {
+        \str_if_eq:nnTF {##1}{\\}
+          { \\ } % if item is literally "\\", make a line break
+          { \cvtag{\tl_trim_spaces:n {##1}} } % otherwise render tag
+      }
     }
 }
 
